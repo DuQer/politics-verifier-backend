@@ -1,0 +1,46 @@
+type Deputy = record {
+  district_name : text;
+  active : bool;
+  birth_location : text;
+  voivodeship : Voivodeship;
+  number_of_votes : nat32;
+  club : text;
+  profession : text;
+  email : text;
+  district_num : nat8;
+  first_name : text;
+  education_level : EducationLevel;
+  last_name : text;
+  card_id : nat16;
+  second_name : opt text;
+  birth_date : text;
+};
+type EducationLevel = variant {
+  "średnie_ogólne";
+  podstawowe;
+  "wyższe";
+  zawodowe;
+  "średnie_zawodowe";
+};
+type Voivodeship = variant {
+  podkarpackie;
+  pomorskie;
+  kujawsko_pomorskie;
+  zachodniopomorskie;
+  "warmińsko_mazurskie";
+  wielkopolskie;
+  "łódzkie";
+  "dolnośląskie";
+  podlaskie;
+  "świętokrzyskie";
+  "śląskie";
+  "małopolskie";
+  mazowieckie;
+  opolskie;
+  lubelskie;
+  lubuskie;
+};
+service : () -> {
+  add_deputy : (Deputy) -> ();
+  get_deputy : (nat16) -> (opt Deputy) query;
+}
