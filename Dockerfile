@@ -1,5 +1,7 @@
 FROM jenkins/jenkins:lts-jdk17
 
+# ! RUN THIS CONTAINER WITH --cap-add=cap_net_admin, so dockerd can start !
+
 USER root
 
 # Clean lists, update and upgrade
@@ -55,6 +57,11 @@ RUN dfxvm default 0.19.0
 USER root
 RUN chown -R jenkins:jenkins /var/jenkins_home
 RUN ngrok config add-authtoken 2gHQPy1iOHDoeWKoHFJsWvibPRc_WNVqLFfnf6KbcunRmNrJ
+RUN setcap cap_net_admin+ep /usr/sbin/dockerd
+
+# Starting dockerd on container startup
+RUN sed -i '2i sudo nohup dockerd > /dev/null 2>&1 &' /usr/local/bin/jenkins.sh 
+RUN chown jenkins:jenkins /usr/local/bin/jenkins.sh
 
 EXPOSE 8080
 EXPOSE 50000
