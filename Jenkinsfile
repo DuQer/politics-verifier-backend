@@ -2,14 +2,14 @@ pipeline {
     agent any
     
     stages {
-        stage('DFX start') {
+        stage('DFX Start') {
             steps {
                 script {
                     sh(script: 'dfx start --background')
                 }
             }
         }
-        stage('DFX deploy') {
+        stage('DFX Deploy') {
             steps {
                 script {
                     sh(script: 'dfx deploy')
@@ -21,7 +21,7 @@ pipeline {
         stage('Building Docker Image') {
             steps {
                 script {
-                    sh(script: 'docker build -t back-image:latest .', label: 'Building image')
+                    sh(script: 'docker build -t politics-verifier-backend:latest .', label: 'Building image')
                 }
             }
         }
@@ -30,8 +30,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')]) {
                     sh "docker login -u $DOCKER_USER -p $DOCKER_PASSWORD"
-                    sh 'docker tag back-image:latest genzoo/back-image:latest'
-                    sh 'docker push genzoo/back-image:latest'
+                    sh 'docker tag back-image:latest duqer/politics-verifier-backend:latest'
+                    sh 'docker push duqer/politics-verifier-backend:latest'
                 }
             }
         }
