@@ -1,14 +1,11 @@
 FROM jenkins/jenkins:lts-jdk17
 
-<<<<<<< HEAD
 # Your ngrok api key 
 ARG NGROK_API_KEY
 ARG NGROK_DOMAIN
 
 ENV NGROK_DOMAIN=$NGROK_DOMAIN
 # Setting image user to superuser
-=======
->>>>>>> parent of 1966bb3 ([FIX] Working Dockerd in Dockerfile)
 USER root
 
 # Clean lists, update and upgrade
@@ -60,7 +57,6 @@ RUN DFXVM_INIT_YES=true sudo -E DFX_VERSION=0.19.0 sh -ci "$(curl -fsSL https://
 ENV PATH $PATH:/var/jenkins_home/.local/share/dfx/bin
 RUN dfxvm default 0.19.0
 
-<<<<<<< HEAD
 # Setting ngrok token 
 RUN ngrok config add-authtoken $NGROK_API_KEY
 
@@ -79,12 +75,6 @@ RUN cat > /root/.config/dfx/networks.json <<EOF
   }
 }
 EOF
-=======
-# Changing owner of jenkins_home to jenkins and configuring ngrok
-USER root
-RUN chown -R jenkins:jenkins /var/jenkins_home
-RUN ngrok config add-authtoken 2gHQPy1iOHDoeWKoHFJsWvibPRc_WNVqLFfnf6KbcunRmNrJ
->>>>>>> parent of 1966bb3 ([FIX] Working Dockerd in Dockerfile)
 
 # Start script with PID 1 
 RUN {\
