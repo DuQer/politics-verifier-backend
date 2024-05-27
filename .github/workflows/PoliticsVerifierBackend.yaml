@@ -31,19 +31,19 @@ jobs:
       # Upgrades pip to the latest version and installs the necessary dependencies:
       # pytest for running tests and kybra for the application.
 
-    # - name: Install dfx
-    #   uses: dfinity/setup-dfx@main
-    #   with:
-    #     dfx-version: "0.19.0"
-    #   # Installs the specified version of dfx (0.19.0) using the official Dfinity setup-dfx action.
+    - name: Install dfx
+      uses: dfinity/setup-dfx@main
+      with:
+        dfx-version: "0.19.0"
+      # Installs the specified version of dfx (0.19.0) using the official Dfinity setup-dfx action.
 
-    # - name: Start dfx
-    #   run: dfx start --background
-    #   # Starts the dfx network in the background to support deployment of Internet Computer projects.
+    - name: Start dfx
+      run: dfx start --background
+      # Starts the dfx network in the background to support deployment of Internet Computer projects.
 
-    # - name: Deploy dfx
-    #   run: dfx deploy
-    #   # Deploys your Dfinity project using the dfx command.
+    - name: Deploy dfx
+      run: dfx deploy
+      # Deploys your Dfinity project using the dfx command.
 
     - name: Run tests
       run: python -m pytest tests
