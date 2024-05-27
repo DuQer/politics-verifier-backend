@@ -1,12 +1,15 @@
 # Debian with appropriate version of GNU Lib C (GLIBC_2.32)
 FROM debian:bookworm-20240513
 
+<<<<<<< HEAD
 # Your ngrok api key 
 ARG NGROK_API_KEY
 ARG NGROK_DOMAIN
 
 ENV NGROK_DOMAIN=$NGROK_DOMAIN
 # Setting image user to superuser
+=======
+>>>>>>> parent of 1966bb3 ([FIX] Working Dockerd in Dockerfile)
 USER root
 
 # Setting workdir to /root, as /root is root home 
@@ -67,6 +70,7 @@ RUN DFXVM_INIT_YES=true DFX_VERSION=0.19.0 sh -ci "$(curl -fsSL https://sdk.dfin
 ENV PATH $PATH:$HOME/.local/share/dfx/bin
 RUN dfxvm default 0.19.0
 
+<<<<<<< HEAD
 # Setting ngrok token 
 RUN ngrok config add-authtoken $NGROK_API_KEY
 
@@ -85,6 +89,12 @@ RUN cat > /root/.config/dfx/networks.json <<EOF
   }
 }
 EOF
+=======
+# Changing owner of jenkins_home to jenkins and configuring ngrok
+USER root
+RUN chown -R jenkins:jenkins /var/jenkins_home
+RUN ngrok config add-authtoken 2gHQPy1iOHDoeWKoHFJsWvibPRc_WNVqLFfnf6KbcunRmNrJ
+>>>>>>> parent of 1966bb3 ([FIX] Working Dockerd in Dockerfile)
 
 # Start script with PID 1 
 RUN {\
