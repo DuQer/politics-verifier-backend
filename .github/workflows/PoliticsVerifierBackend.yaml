@@ -34,7 +34,3 @@ jobs:
     - name: Run tests
       run: python -m pytest tests
       # Runs the tests located in the 'tests' directory using pytest.
-
-    - name: Build
-      run: python src/main.py
-      # Executes the main script located at 'src/main.py' to build the application.
