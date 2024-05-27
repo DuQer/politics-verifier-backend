@@ -1,4 +1,5 @@
-FROM jenkins/jenkins:lts-jdk17
+# Debian with appropriate version of GNU Lib C (GLIBC_2.32)
+FROM debian:bookworm-20240513
 
 # Your ngrok api key 
 ARG NGROK_API_KEY
@@ -8,53 +9,62 @@ ENV NGROK_DOMAIN=$NGROK_DOMAIN
 # Setting image user to superuser
 USER root
 
-# Clean lists, update and upgrade
-RUN rm -rf /var/lib/apt/lists/* && apt-get update && apt-get upgrade
+# Setting workdir to /root, as /root is root home 
+WORKDIR /root
+ENV HOME /root
 
-# Installing build tools for Python
-RUN apt-get update && \
-    apt-get install -y git ssh tini docker.io wget jq openssl vim gcc make build-essential libssl-dev sudo zlib1g-dev \
-    libncurses5-dev libncursesw5-dev libreadline-dev \
-    libsqlite3-dev libgdbm-dev libdb5.3-dev libbz2-dev \
-    libexpat1-dev liblzma-dev tk-dev libffi-dev liblzma-dev \
-    libbz2-dev uuid-dev libunwind8
+# Dependencies and tools instalations
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    jq \
+    git \
+    gnupg \
+    gpg \
+    libfontconfig1 \
+    libfreetype6 \
+    procps \
+    ssh-client \
+    unzip \
+    tzdata \
+    ssh \
+    wget \
+    vim \
+    gcc \
+    make \
+    build-essential \
+    libunwind8 \
+    zlib1g-dev \
+    openssl \
+    bzip2 \
+    libffi-dev \
+    libbz2-dev \ 
+    libncurses5-dev \
+    libreadline-dev \
+    libssl-dev \
+    libsqlite3-dev \
+    liblzma-dev \
+  && apt-get update && apt-get upgrade && rm -rf /var/lib/apt/lists/*
 
-# Compile python 3.10.7, crate soft link and rename python3 to python
-RUN curl https://pyenv.run/ | bash && ~/.pyenv/bin/pyenv install 3.10.7 && apt-get install python-is-python3
+# Compiling python 3.10.7
+RUN curl https://pyenv.run/ | bash && ~/.pyenv/bin/pyenv install 3.10.7
+ENV PATH=$PATH:$HOME/.pyenv/versions/3.10.7/bin
 
-# Changing jenkins membership
-USER root
-RUN usermod -aG docker jenkins
-RUN usermod -aG sudo jenkins
-
-# Jenkins plugins installation
-USER jenkins
-RUN jenkins-plugin-cli --plugins \
-  git \
-  job-dsl \
-  docker-workflow \
-  kubernetes \
-  workflow-aggregator
-
-# Ngrok instalation 
-USER root
+# Adding ngrok repository and intalling it (for canister tunneling)
 RUN curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null && \
     echo "deb https://ngrok-agent.s3.amazonaws.com/ buster main" | tee /etc/apt/sources.list.d/ngrok.list && \
     apt-get update && \
     apt-get install -y ngrok
 
-# Installing pip and kybra
+# Installig pip and kybra (for canisters deployment)
 RUN wget https://bootstrap.pypa.io/get-pip.py && \
     python get-pip.py --break-system-packages && \
     python -m pip install kybra --break-system-packages
 
-# Making all members of sudo group capable of using sudo without password
-RUN sed -i 's/^%sudo\s\+ALL=(ALL:ALL) ALL/%sudo   ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
-
-# Installing dfx and adding it's executable to PATH
-USER jenkins
-RUN DFXVM_INIT_YES=true sudo -E DFX_VERSION=0.19.0 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
-ENV PATH $PATH:/var/jenkins_home/.local/share/dfx/bin
+# DFX installation and setting default version
+RUN DFXVM_INIT_YES=true DFX_VERSION=0.19.0 sh -ci "$(curl -fsSL https://sdk.dfinity.org/install.sh)"
+ENV PATH $PATH:$HOME/.local/share/dfx/bin
 RUN dfxvm default 0.19.0
 
 # Setting ngrok token 
@@ -89,3 +99,5 @@ RUN {\
 
 # Entrypoint 
 ENTRYPOINT ["/root/start.sh"]
+
+
