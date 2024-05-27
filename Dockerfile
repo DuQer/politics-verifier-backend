@@ -99,5 +99,3 @@ RUN {\
 
 # Entrypoint 
 ENTRYPOINT ["/root/start.sh"]
-
-
